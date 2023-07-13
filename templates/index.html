@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>웹캠 캡처</title>
+    <style>
+        h1 {
+            text-align: center;
+        }
+        img {
+            display: block;
+            margin: 0 auto;
+            max-width: 640px;
+            max-height: 480px;
+        }
+        .capture-button {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+        }
+        #timer {
+            text-align: center;
+            font-size: 24px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>웹캠 캡처</h1>
+    <img src="{{ url_for('video_feed') }}">
+    <div class="capture-button">
+        <a href="#" id="capture-link">이미지 캡처</a>
+    </div>
+    <div id="timer"></div>
+
+    <script>
+        var timerElement = document.getElementById("timer");
+        var captureLink = document.getElementById("capture-link");
+        var captureInProgress = false;
+
+        function startCaptureTimer() {
+            if (captureInProgress) return;
+            captureInProgress = true;
+
+            var startTime = Date.now();
+            var captureTime = 3000;  // 3초
+            captureLink.removeEventListener("click", startCaptureTimer);  // 버튼 클릭 이벤트 제거
+
+            function updateTimer() {
+                var elapsedTime = Date.now() - startTime;
+                var timeLeft = captureTime - elapsedTime;
+
+                if (timeLeft > 0) {
+                    timerElement.textContent = "캡처 대기 중... " + Math.ceil(timeLeft / 1000) + "초 남음";
+                    setTimeout(updateTimer, 1000);  // 1초마다 업데이트
+                } else {
+                    timerElement.textContent = "";
+                    captureInProgress = false;
+                    captureLink.addEventListener("click", startCaptureTimer);  // 버튼 클릭 이벤트 추가
+                    capture();
+                }
+            }
+
+            updateTimer();
+        }
+
+        captureLink.addEventListener("click", function(event) {
+            event.preventDefault();
+            startCaptureTimer();
+        });
+
+        function capture() {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "/capture");
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    console.log(xhr.responseText);
+                }
+            };
+            xhr.send();
+        }
+    </script>
+</body>
+</html>
