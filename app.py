@@ -50,11 +50,20 @@ def capture():
         cv2.imwrite(os.path.join(image_name), frame)
         capture_start_time = None  # 캡처 완료 후 타이머 초기화
         print(f"이미지 성공적으로 저장. ({image_name})")
+        yolo_result()
         return f'이미지 성공적으로 저장. ({image_name})'
     else:
         capture_start_time = None  # 캡처 실패 후 타이머 초기화
         print("이미지 저장 실패.")
         return '이미지 저장 실패.'
 
+@app.route('/yolo_result')
+def yolo_result():
+    from roboflow import Roboflow
+    rf = Roboflow(api_key="CwsFxkPSJLuJgcuN44Zw")
+    project = rf.workspace().project("ingredients_detection")
+    model = project.version(2).model
+    print(model.predict("captured_image.jpg", confidence=40, overlap=30).json)
+    model.predict("captured_image2.jpg", confidence=40, overlap=30).save("prediction.jpg")
 if __name__ == '__main__':
     app.run(debug=True)
