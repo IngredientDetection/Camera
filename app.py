@@ -63,7 +63,15 @@ def yolo_result():
     rf = Roboflow(api_key="CwsFxkPSJLuJgcuN44Zw")
     project = rf.workspace().project("ingredients_detection")
     model = project.version(2).model
-    print(model.predict("captured_image.jpg", confidence=40, overlap=30).json)
     model.predict("captured_image2.jpg", confidence=40, overlap=30).save("prediction.jpg")
+    
+    #pred 에 x y width height confidence class image_path prediction_type 이 있다
+    pred = model.predict("captured_image2.jpg", confidence=40, overlap=30)
+    
+    #class 목록까지 불러옴
+    classes = [prediction['class'] for prediction in pred]
+    print(classes)
+
+
 if __name__ == '__main__':
     app.run(debug=True)
