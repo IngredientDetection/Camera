@@ -1,4 +1,4 @@
-from flask import Flask, render_template, Response
+from flask import Flask, render_template, Response, jsonify
 import cv2
 import os
 import time
@@ -48,16 +48,15 @@ def capture():
         image_name = f'captured_image.jpg'
         # 이미지 저장
         cv2.imwrite(os.path.join(image_name), frame)
-        capture_start_time = None  # 캡처 완료 후 타이머 초기화
         print(f"이미지 성공적으로 저장. ({image_name})")
-        yolo_result()
-        return f'이미지 성공적으로 저장. ({image_name})'
-    else:
-        capture_start_time = None  # 캡처 실패 후 타이머 초기화
-        print("이미지 저장 실패.")
-        return '이미지 저장 실패.'
 
-@app.route('/yolo_result')
+        classes=yolo_result()
+        print(classes)
+
+        return jsonify(classes)
+    else:
+        print("이미지 저장 실패.")
+
 def yolo_result():
     from roboflow import Roboflow
     rf = Roboflow(api_key="CwsFxkPSJLuJgcuN44Zw")
@@ -70,7 +69,8 @@ def yolo_result():
     
     #class 목록까지 불러옴
     classes = [prediction['class'] for prediction in pred]
-    print(classes)
+    return classes
+
 
 
 if __name__ == '__main__':

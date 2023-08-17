@@ -12,48 +12,64 @@
             max-width: 640px;
             max-height: 480px;
         }
-        .capture-button {
-            display: block;
-            text-align: center;
-            margin-top: 20px;
+       .toggle-button {
+            margin: 5px;
+            padding: 5px 10px;
+            border: 1px solid #ccc;
+            cursor: pointer;
         }
-        #timer {
-            text-align: center;
-            font-size: 24px;
-            margin-top: 20px;
+        .toggle-button.active {
+            background-color: lightblue;
         }
     </style>
+
 </head>
 <body>
     <h1>웹캠 캡처</h1>
     <img src="{{ url_for('video_feed') }}">
     <div class="capture-button">
-        <a href="#" id="capture-link">이미지 캡처</a>
+        <button id="captureButton">이미지 캡처</button>
     </div>
     <div>
-        <img >
+        <div id="predicted-classes"></div>
     </div>
-
     <script>
-        var captureLink = document.getElementById("capture-link");
+        document.addEventListener("DOMContentLoaded", function() {
+            var toggleButtons = document.querySelectorAll(".toggle-button");
+            toggleButtons.forEach(function(button) {
+                button.addEventListener("click", function() {
+                    this.classList.toggle("active");
+                });
+            });
 
-        captureLink.addEventListener("click", function(event) {
-            capture();
+            document.getElementById("captureButton").addEventListener("click", function() {
+                console.log("Capture button clicked");
+                var xhr = new XMLHttpRequest();
+                xhr.open("GET", "/capture", true);
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        var classes = JSON.parse(xhr.responseText);
+                        var classesList = document.getElementById("predicted-classes");
+                        classesList.innerHTML = "<h2>Predicted Classes:</h2><ul>";
+                        for (var i = 0; i < classes.length; i++) {
+                            classesList.innerHTML += '<li class="toggle-button">' + classes[i] + '</li>';
+                        }
+                        classesList.innerHTML += "</ul>";
+                        attachToggleButtonEventListeners();  // 새로 생성된 토글 버튼에 이벤트 리스너 연결
+                    }
+                };
+                xhr.send();
+            });
+
+            function attachToggleButtonEventListeners() {
+                var toggleButtons = document.querySelectorAll(".toggle-button");
+                toggleButtons.forEach(function(button) {
+                    button.addEventListener("click", function() {
+                        this.classList.toggle("active");
+                    });
+                });
+            }
         });
-
-        function capture() {
-            var xhr = new XMLHttpRequest();
-            xhr.open("GET", "/capture");
-            xhr.onload = function() {
-                if (xhr.status === 200) {
-                    console.log(xhr.responseText);
-                }
-            };
-            xhr.send();
-        }
-
-
-
     </script>
 </body>
 </html>
