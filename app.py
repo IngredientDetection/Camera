@@ -1,6 +1,7 @@
-from flask import Flask, render_template, Response, jsonify
+from flask import Flask, render_template, Response, jsonify, request, redirect, url_for
 import cv2
-import os
+import sys, os
+from recommend import based_Ingredient
 import time
 
 app = Flask(__name__)
@@ -33,6 +34,8 @@ def get_frame():
 def index():
     return render_template('index.html')
 
+def dataframe_to_html(dataframe):
+    return dataframe.to_html(classes='table table-striped', index=False)
 
 @app.route('/video_feed')  # 웹 브라우저에서 웹캠 스트리밍을 수신할 때 사용
 def video_feed():
@@ -51,6 +54,7 @@ def capture():
         print(f"이미지 성공적으로 저장. ({image_name})")
 
         classes=yolo_result()
+
         print(classes)
 
         return jsonify(classes)
@@ -70,8 +74,21 @@ def yolo_result():
     #class 목록까지 불러옴
     classes = [prediction['class'] for prediction in pred]
     return classes
+@app.route('/recommend',methods=['GET'])
+def recommend_page():
+    return render_template('recommend.html')
 
-
+# 선택된 식재료를 이용하여 레시피 추천하는 함수 호출하기
+@app.route('/recommend',methods=['POST'])
+def recommend():
+    selected_ingredients = request.json.get('dataArray')
+    print("selected_ingredients",selected_ingredients)
+    input = ', '.join(selected_ingredients)
+    rec = based_Ingredient.get_recs(input)
+    # 이 예시에서는 간단히 선택된 재료를 출력합니다.
+    print(rec)
+    html_table = dataframe_to_html(rec)
+    return render_template('recommend.html',table=html_table)
 
 if __name__ == '__main__':
     app.run(debug=True)

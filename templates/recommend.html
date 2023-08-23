@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>레시피 추천</title>
+</head>
+<body>
+    <h1>Other Page</h1>
+    <p>This is the other page content.</p>
+    <a href="{{ url_for('index') }}">Go back to Home Page</a>
+    <h2>검색 결과:</h2>
+        {{table|safe}}
+    <div id="result"></div>
+
+ <script>
+        function submitIngredients() {
+            const formElement = document.getElementById('ingredientForm');
+            const formData = new FormData(formElement);
+
+            fetch('/select_ingredients', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                const resultElement = document.getElementById('result');
+                resultElement.innerHTML = data;
+            });
+        }
+    </script>
+</body>
+</html>
