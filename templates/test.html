@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>퀴즈 페이지</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+  }
+  .quiz-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  .question {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  .options {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .option {
+    margin: 5px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .option:hover {
+    background-color: #f0f0f0;
+  }
+</style>
+</head>
+<body>
+<div class="quiz-container">
+  <div class="question">1. 대한민국의 수도는?</div>
+  <div class="options">
+    <div class="option" onclick="checkAnswer(1)">서울</div>
+    <div class="option" onclick="checkAnswer(0)">도쿄</div>
+    <div class="option" onclick="checkAnswer(0)">베이징</div>
+    <div class="option" onclick="checkAnswer(0)">워싱턴 D.C.</div>
+  </div>
+  <div id="result"></div>
+</div>
+
+<script>
+  function checkAnswer(selected) {
+    const resultElement = document.getElementById("result");
+    if (selected === 1) {
+      resultElement.innerHTML = "정답입니다!";
+    } else {
+      resultElement.innerHTML = "오답입니다. 다시 선택해주세요.";
+    }
+  }
+</script>
+</body>
+</html>

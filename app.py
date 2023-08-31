@@ -9,6 +9,9 @@ app = Flask(__name__)
 capture_start_time = None
 camera = None  # 웹캠 객체를 전역 변수로 선언
 
+ingredient_classes={"egg":"달걀", "garlic":"마늘","greenonion":"파","lettuce":"상추","meat":"고기","onion":"양파","tofu":"두부"}
+global html_table
+
 # 웹캠으로부터 프레임을 가져오는 함수
 def get_frame():
     global camera  # 전역 변수 사용
@@ -46,7 +49,6 @@ def capture():
     global camera  # 전역 변수 사용
 
     success, frame = camera.read()
-
     if success:
         image_name = f'captured_image.jpg'
         # 이미지 저장
@@ -67,28 +69,31 @@ def yolo_result():
     project = rf.workspace().project("ingredients_detection")
     model = project.version(2).model
     model.predict("captured_image2.jpg", confidence=40, overlap=30).save("prediction.jpg")
-    
     #pred 에 x y width height confidence class image_path prediction_type 이 있다
     pred = model.predict("captured_image2.jpg", confidence=40, overlap=30)
-    
+    new_classes = []
     #class 목록까지 불러옴
     classes = [prediction['class'] for prediction in pred]
-    return classes
-@app.route('/recommend',methods=['GET'])
+    for c in classes:
+        new_classes.append(ingredient_classes[c])
+    return new_classes
+
+@app.route('/recommend_page',methods=['GET'])
 def recommend_page():
-    return render_template('recommend.html')
+    return render_template('recommend.html',table=html_table)
 
 # 선택된 식재료를 이용하여 레시피 추천하는 함수 호출하기
-@app.route('/recommend',methods=['POST'])
+@app.route('/recommend',methods=('POST','GET'))
 def recommend():
     selected_ingredients = request.json.get('dataArray')
-    print("selected_ingredients",selected_ingredients)
+    print("selected_ingredients", selected_ingredients)
     input = ', '.join(selected_ingredients)
     rec = based_Ingredient.get_recs(input)
     # 이 예시에서는 간단히 선택된 재료를 출력합니다.
     print(rec)
+    global html_table
     html_table = dataframe_to_html(rec)
-    return render_template('recommend.html',table=html_table)
+    return render_template('recommend.html', table=html_table)
 
 if __name__ == '__main__':
     app.run(debug=True)
