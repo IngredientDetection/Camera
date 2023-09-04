@@ -13,7 +13,7 @@ import numpy as np
 import config
 ## 콘텐츠 기반 추천시스템
 
-recipe_data = pd.read_csv("C:\\Users\\jmjun\\PycharmProjects\\recommend_System\\recommend\\data\\pre_tmdb_recipe3.csv",encoding='cp949')
+recipe_data = pd.read_csv("data\pre_tmdb_recipe3.csv",encoding='cp949')
 
 
 #### 사용자가 특정 아이템을 선호하는 경우, 그 아이템과 '비슷한' 콘텐츠를 가진 다른 아이템을 추천해주는 방식
