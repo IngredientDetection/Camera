@@ -36,8 +36,6 @@
         <br>
         <div id="buttonContainer"></div>
         <br>
-        <button onclick="location.href='/recommend'">Show Table</button>
-        <div id="pagemove"></div>
     </div>
     <br>
 
@@ -49,15 +47,6 @@
                 var buttonContainer = document.getElementById("buttonContainer");
                 var submitButton = document.createElement("button");
                 submitButton.innerHTML = "Submit";
-                submitButton.type = "submit";
-
-                buttonContainer.appendChild(submitButton);
-            }
-          <!--페이지 이동 버튼-->
-          function createSubmitButton2() {
-                var buttonContainer = document.getElementById("pagemove");
-                var submitButton = document.createElement("button");
-                submitButton.innerHTML = "PageMove";
                 submitButton.type = "submit";
 
                 buttonContainer.appendChild(submitButton);
