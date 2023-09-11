@@ -2,21 +2,73 @@
 <html>
 <head>
     <title>레시피 추천</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+    <style>
+        body {
+            background-color: #f1efe9;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        h1 {
+            font-family: 'Montserrat', sans-serif;
+            text-align: center;
+            margin-top: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .link-center{
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .table-container {
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .table-container th{
+            text-align: center;
+        }
+
+        button {
+            font-family: Arial, sans-serif;
+            padding: 10px 20px;
+            background-color: black;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: grey;
+        }
+    </style>
 </head>
+
 <body>
-    <h1>Other Page</h1>
-    <p>This is the other page content.</p>
-    <a href="{{ url_for('index') }}">Go back to Home Page</a>
-       <h2>재료를 선택하세요:</h2>
-    <form id="ingredientForm">
-        {% for ingredient in ingredients %}
-            <input type="checkbox" name="ingredient" value="{{ ingredient }}">{{ ingredient }}<br>
-        {% endfor %}
-        <br>
-        <input type="button" value="선택 완료" onclick="submitIngredients()">
-    </form>
-    <h2>검색 결과:</h2>
-        {{table|safe}}
+    <h1>Recipe Recommendation</h1>
+<!--    <h2>재료를 선택하세요</h2>-->
+<!--    <form id="ingredientForm">-->
+<!--        {% for ingredient in ingredients %}-->
+<!--            <input type="checkbox" name="ingredient" value="{{ ingredient }}">{{ ingredient }}<br>-->
+<!--        {% endfor %}-->
+<!--        <br>-->
+<!--        <input type="button" value="선택 완료" onclick="submitIngredients()">-->
+<!--    </form>-->
+    <br>
+<!--    <h2>AI Recommends</h2>-->
+    <div class="table-container">
+    {{table|safe}}
+    </div>
+    <br><br>
+
+    <div class="link-center">
+    <a href="{{ url_for('index') }}">Go to MainPage</a>
+    </div>
     <script>
         function submitIngredients() {
             const formElement = document.getElementById('ingredientForm');

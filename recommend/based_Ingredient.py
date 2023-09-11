@@ -25,7 +25,7 @@ import numpy as np
 import config
 ## 콘텐츠 기반 추천시스템
 
-recipe_data = pd.read_csv("C:\\Users\\jmjun\\PycharmProjects\\recommend_System\\recommend\\data\\pre_tmdb_recipe3.csv",encoding='cp949')
+recipe_data = pd.read_csv("data\pre_tmdb_recipe3.csv",encoding='cp949')
 
 recipe_data=recipe_data[['레시피일련번','food_name','요리방법별명','요리상황별명','요리재료별명','요리종류별명','요리재료내용','요리난이도명']]
 
