@@ -104,9 +104,7 @@
             <div id="predicted-classes"></div>
             <div id="buttonContainer"></div>
             <br>
-            <button onclick="location.href='/recommend'">Show Table</button>
-            <br>
-            <div id="pagemove"></div>
+<!--            <div id="pagemove"></div>-->
         </div>
     </div>
 
@@ -124,14 +122,14 @@
             }
           <!--페이지 이동 버튼-->
 
-          function createSubmitButton2() {
-                var buttonContainer = document.getElementById("pagemove");
-                var submitButton = document.createElement("button");
-                submitButton.innerHTML = "PageMove";
-                submitButton.type = "submit";
+<!--          function createSubmitButton2() {-->
+<!--                var buttonContainer = document.getElementById("pagemove");-->
+<!--                var submitButton = document.createElement("button");-->
+<!--                submitButton.innerHTML = "PageMove";-->
+<!--                submitButton.type = "submit";-->
 
-                buttonContainer.appendChild(submitButton);
-            }
+<!--                buttonContainer.appendChild(submitButton);-->
+<!--            }-->
 
            <!--선택된 식재료 목록을 플라스크 서버에 전송하는 함수-->
            document.getElementById("buttonContainer").addEventListener("click", function() {
@@ -149,16 +147,16 @@
             xhr2.send(data);
         });
 
-          document.getElementById("pagemove").addEventListener("click", function() {
-                var xhr3 = new XMLHttpRequest();
-                xhr3.open("GET", "/recommend_page", true);
-                xhr3.onreadystatechange = function() {
-                    if (xhr3.readyState === 4 && xhr3.status === 200) {
-                        window.location.href = "/recommend_page";
-                    }
-                };
-                xhr3.send();
-            });
+<!--          document.getElementById("pagemove").addEventListener("click", function() {-->
+<!--                var xhr3 = new XMLHttpRequest();-->
+<!--                xhr3.open("GET", "/recommend_page", true);-->
+<!--                xhr3.onreadystatechange = function() {-->
+<!--                    if (xhr3.readyState === 4 && xhr3.status === 200) {-->
+<!--                        window.location.href = "/recommend_page";-->
+<!--                    }-->
+<!--                };-->
+<!--                xhr3.send();-->
+<!--            });-->
 
         document.addEventListener("DOMContentLoaded", function() {
             var toggleButtons = document.querySelectorAll(".toggle-button");
@@ -182,7 +180,7 @@
                             classesList.innerHTML += '<li class="toggle-button" id="button-' + i + '">' + classes[i] + '</li>';                        }
                         classesList.innerHTML += "</ul>";
                         createSubmitButton();
-                        createSubmitButton2()
+<!--                        createSubmitButton2()-->
                         attachToggleButtonEventListeners(classes);  // 새로 생성된 토글 버튼에 이벤트 리스너 연결
                      }
                 };
