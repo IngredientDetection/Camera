@@ -1,16 +1,3 @@
-import os
-import sys
-import logging
-import unidecode
-import ast
-
-import numpy as np
-import pandas as pd
-
-from gensim.models import Word2Vec
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
-from collections import defaultdict
 from gensim.models import Word2Vec
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
@@ -19,10 +6,6 @@ from MeanEmbeddingVectorizer import MeanEmbeddingVectorizer
 import Word2Vec_train
 from collections import defaultdict
 import pandas as pd
-import pickle
-import csv
-import numpy as np
-import config
 ## 콘텐츠 기반 추천시스템
 
 recipe_data = pd.read_csv("data\pre_tmdb_recipe3.csv",encoding='cp949')
@@ -33,8 +16,6 @@ recipe_data=recipe_data[['레시피일련번','food_name','요리방법별명','
 
 recipe_core=recipe_data[['레시피일련번','food_name','요리종류별명','요리재료내용']]
 recipe_core=recipe_core.fillna("")
-import config
-#from ingredient_parser import ingredient_parser
 
 
 def get_and_sort_corpus(data):
@@ -57,15 +38,15 @@ def get_recommendations(N, scores):
     # order the scores with and filter to get the highest N scores
     top = sorted(range(len(scores)), key=lambda i: scores[i], reverse=True)[:N]
     # create dataframe to load in recommendations
-    recommendation = pd.DataFrame(columns=["음식명","요리재료내용","score"])
+    recommendation = pd.DataFrame(columns=["음식명","요리재료내용","score","URL"])
     count = 0
     for i in top:
         recommendation.at[count, "음식명"] = df_recipes["food_name"][i]
         recommendation.at[count, "요리재료내용"] =df_recipes["요리재료내용"][i]
         recommendation.at[count, "score"] = f"{scores[i]}"
+        recommendation.at[count, "URL"] = df_recipes["레시피일련번"][i]
         count += 1
     return recommendation
-
 
 
 def get_recs(ingredients, N=5, mean=False):

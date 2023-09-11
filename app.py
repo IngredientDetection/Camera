@@ -2,6 +2,7 @@ from flask import Flask, render_template, Response, jsonify, request, redirect, 
 import cv2
 import sys, os
 from recommend import based_Ingredient
+from bs4 import BeautifulSoup
 import time
 
 app = Flask(__name__)
@@ -78,21 +79,37 @@ def yolo_result():
         new_classes.append(ingredient_classes[c])
     return new_classes
 
+# # URL 링크 생성
+# def create_link(url):
+#     return f'https://www.10000recipe.com/recipe/{url}'
+
+
+
 @app.route('/recommend_page',methods=['GET'])
 def recommend_page():
     return render_template('recommend.html',table=html_table)
 
 # 선택된 식재료를 이용하여 레시피 추천하는 함수 호출하기
+
+
 @app.route('/recommend',methods=('POST','GET'))
 def recommend():
     selected_ingredients = request.json.get('dataArray')
     print("selected_ingredients", selected_ingredients)
     input = ', '.join(selected_ingredients)
-    rec = based_Ingredient.get_recs(input)
+    recipe_core = based_Ingredient.get_recs(input)
+    # recipe_core['URL'] = recipe_core['URL'].apply(create_link)
     # 이 예시에서는 간단히 선택된 재료를 출력합니다.
-    print(rec)
+    # BeautifulSoup을 사용하여 URL 열에 있는 값을 링크로 변경
     global html_table
-    html_table = dataframe_to_html(rec)
+    # 데이터프레임을 HTML 표로 변환
+    html_table = recipe_core.to_html(classes='table table-striped', escape=False, index=False)
+    # 특정 컬럼에 있는 값을 <a> 태그로 변경
+    # 여기에서는 'URL' 컬럼을 <a> 태그로 감싸겠습니다.
+    for index, row in recipe_core.iterrows():
+        url = row['URL']
+        link = f'<a href="https://www.10000recipe.com/recipe/{url}">{str(url)}</a>'
+        html_table = html_table.replace(str(url), link)
     return render_template('recommend.html', table=html_table)
 
 if __name__ == '__main__':
