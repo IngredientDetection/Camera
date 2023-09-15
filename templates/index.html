@@ -104,6 +104,8 @@
             <div id="predicted-classes"></div>
             <div id="buttonContainer"></div>
             <br>
+            <div id="image-container">
+            </div>
 <!--            <div id="pagemove"></div>-->
         </div>
     </div>
@@ -179,10 +181,18 @@
                         for (var i = 0; i < classes.length; i++) {
                             classesList.innerHTML += '<li class="toggle-button" id="button-' + i + '">' + classes[i] + '</li>';                        }
                         classesList.innerHTML += "</ul>";
+
                         createSubmitButton();
 <!--                        createSubmitButton2()-->
                         attachToggleButtonEventListeners(classes);  // 새로 생성된 토글 버튼에 이벤트 리스너 연결
                      }
+
+                     var imageContainer = document.getElementById("image-container");
+                     var image = new Image();
+                     image.src = "/get_prediction_image"; // 서버로부터 이미지 가져오기
+                     imageContainer.innerHTML = ""; // 이미지를 한 번만 표시하도록 기존 내용 삭제
+                     imageContainer.appendChild(image);
+
                 };
                 xhr.send();
             });
