@@ -9,19 +9,49 @@
             font-family: 'Montserrat', sans-serif;
         }
 
-
         h1 {
             font-family: 'Montserrat', sans-serif;
             text-align: center;
-            margin-top: 20px;
+            margin-top: 36px;
+            margin-bottom : 72px;
             font-weight: bold;
             color: #333;
         }
 
         #container {
-            max-width: 800px;
+            max-width: 1200px;
             margin: 0 auto;
             text-align: center;
+        }
+
+        #webcam-container {
+            display: flex;
+            align-items: center;
+        }
+
+        #webcam {
+            width:auto;
+            height: auto;
+            float: left; /* 웹캠을 왼쪽으로 이동 */
+        }
+
+        #prediction-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        #prediction-image {
+            max-width: 100%; /* 변경된 부분: 이미지 최대 너비를 100%로 설정 */
+            height: auto; /* 변경된 부분: 높이를 자동으로 조절하여 가로세로 비율 유지 */
+            display: block;
+            margin: 0 auto;
+        }
+
+        #captureButton {
+            margin-left: 20px; /* 웹캠과 버튼 사이 간격 조절 */
+            margin-right: 20px; /* prediction과 버튼 사이 간격 조절 */
         }
 
         #captureButton {
@@ -35,13 +65,20 @@
             cursor: pointer;
         }
 
-        #prediction-image {
-            max-width: 100%; /* 이미지의 최대 너비를 100%로 설정 */
-            height: auto; /* 이미지의 높이를 자동으로 조정 */
-            display: block; /* 이미지를 블록 요소로 설정하여 가로 중앙 정렬 */
-            margin: 0 auto;
+        #prediction-image-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            margin-top: 20px;
         }
 
+        #prediction-image {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
 
         #captureButton:hover {
             background-color: grey;
@@ -51,7 +88,6 @@
             margin-top: 20px;
             text-align: left;
         }
-
 
         .toggle-button {
             /* 점 없애기 */
@@ -67,7 +103,6 @@
         .toggle-button.active {
             background-color: grey;
         }
-
 
         #buttonContainer {
             margin-top: 20px;
@@ -90,40 +125,59 @@
         button:hover {
             background-color: grey;
         }
-
-
-
     </style>
 
 </head>
 <body>
-    <div id="container">
-        <h1>Recipe Recommendation</h1>
-        <br><br>
-        <img src="{{ url_for('video_feed') }}">
-        <div class="capture-button">
-            <br>
-            <br>
-            <button id="captureButton">Image Capture</button>
-        </div>
+<div id="container">
+    <h1>Recipe Recommendation</h1>
+    <br><br>
 
-        <!-- 이미지 컨테이너를 숨김 -->
-        <div id="prediction-container" style="display: none;">
-        <h2>Predicted Image</h2>
-        <img id="prediction-image" src="{{ url_for('static', filename='prediction.jpg') }}" alt="Prediction">
-        </div>
-
-        <div>
-            <div id="predicted-classes"></div>
-            <div id="buttonContainer"></div>
-            <br>
-            </div>
-<!--            <div id="pagemove"></div>-->
+    <div id="webcam-container">
+        <img id="webcam" src="{{ url_for('video_feed') }}" >
+        <button id="captureButton" >Image Capture</button>
+        <div id="prediction-container" style="display: none;"> <!-- 초기에는 숨김 -->
+            <img id="prediction-image" src="{{ url_for('static', filename='prediction.jpg') }}" alt="Prediction">
         </div>
     </div>
 
+    <div>
+        <div id="predicted-classes"></div>
+        <div id="buttonContainer"></div>
+        <br>
+    </div>
+</div>
+
+
     <script>
         selectedIngredients=[]
+
+<!--        // 웹페이지 로드 시, 웹캠 이미지와 예측 이미지 크기를 조정-->
+<!--window.addEventListener('load', function() {-->
+<!--    resizeImages();-->
+<!--});-->
+
+// 윈도우 크기가 변경될 때 웹캠 이미지와 예측 이미지 크기를 조정
+window.addEventListener('resize', function() {
+    resizeImages();
+});
+
+function resizeImages() {
+    var webcamImage = document.getElementById("webcam");
+    var predictionImage = document.getElementById("prediction-image");
+
+   // 웹캠 이미지와 예측 이미지를 원하는 크기로 조절
+    var desiredWidth = webcamImage.clientWidth; // 웹캠 이미지의 현재 가로 크기를 가져옴
+    var desiredHeight = webcamImage.clientHeight; // 웹캠 이미지의 현재 세로 크기를 가져옴
+
+    webcamImage.style.width = desiredWidth + "px";
+    webcamImage.style.height = desiredHeight + "px";
+
+    predictionImage.style.width = desiredWidth + "px";
+    predictionImage.style.height = desiredHeight + "px";
+}
+
+
 
         <!--탐지된 식재료 목록이 생성과 동시에 선택해서 제출하기 버튼 생성-->
           function createSubmitButton() {
@@ -173,6 +227,11 @@
 <!--            });-->
 
         document.addEventListener("DOMContentLoaded", function() {
+
+            var webcamImage = document.getElementById("webcam");
+            webcamImage.style.width = "45%";
+            webcamImage.style.height = "45%";
+
             var toggleButtons = document.querySelectorAll(".toggle-button");
             toggleButtons.forEach(function(button) {
                 button.addEventListener("click", function() {
@@ -205,23 +264,31 @@
 
                         predictionImage.onload = function() {
                             // 이미지가 로드된 후 크기를 조정
-                            var webcamImage = document.querySelector("img[src^='{{ url_for('video_feed') }}']");
-                            predictionImage.style.width = webcamImage.width + "px";
-                            predictionImage.style.height = webcamImage.height + "px";
+                            var webcamImage = document.getElementById("webcam");
+                            var ratio = webcamImage.width / webcamImage.height;
+                            predictionImage.style.width = webcamImage.clientWidth + "px";
+                            predictionImage.style.height = (webcamImage.clientWidth / ratio) + "px";
                             };
+
+
 
                         predictionImage.src = "static/prediction.jpg"; // 이미지 경로를 예측 이미지로 업데이트
                         predictionImage.alt = "Predicted Image"; // 이미지 alt 속성 업데이트
 
 
+
                         attachToggleButtonEventListeners(classes);  // 새로 생성된 토글 버튼에 이벤트 리스너 연결
                      }
 
-                     var imageContainer = document.getElementById("image-container");
-                     var image = new Image();
-                     image.src = "/get_prediction_image"; // 서버로부터 이미지 가져오기
-                     imageContainer.innerHTML = ""; // 이미지를 한 번만 표시하도록 기존 내용 삭제
-                     imageContainer.appendChild(image);
+<!--                     var imageContainer = document.getElementById("image-container");-->
+<!--                     var image = new Image();-->
+<!--                     image.src = "/get_prediction_image"; // 서버로부터 이미지 가져오기-->
+<!--                     imageContainer.innerHTML = ""; // 이미지를 한 번만 표시하도록 기존 내용 삭제-->
+<!--                     imageContainer.appendChild(image);-->
+
+<!--                     // 웹캠의 크기를 다시 설정 (예: 원래 크기로)-->
+<!--                     var webcamImage = document.getElementById("webcam");-->
+<!--                     webcamImage.style.width = "45%"; // 여기에서 원하는 크기로 설정-->
 
                 };
                 xhr.send();
