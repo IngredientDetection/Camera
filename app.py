@@ -11,7 +11,7 @@ camera = None  # 웹캠 객체를 전역 변수로 선언
 
 ingredient_classes={"egg":"달걀", "garlic":"마늘","greenonion":"파","lettuce":"상추","meat":"고기","onion":"양파","tofu":"두부"}
 global html_table
-
+global classes
 # 웹캠으로부터 프레임을 가져오는 함수
 def get_frame():
     global camera  # 전역 변수 사용
@@ -78,8 +78,15 @@ def yolo_result():
         new_classes.append(ingredient_classes[c])
     return new_classes
 
+
+@app.route('/page_move',methods=('POST','GET'))
+def page_move():
+    print("classes", classes)
+    return render_template('recommend.html', classes=classes)
+
 @app.route('/recommend_page',methods=['GET'])
 def recommend_page():
+    selected_ingredients = request.json.get('dataArray')
     return render_template('recommend.html',table=html_table)
 
 # 선택된 식재료를 이용하여 레시피 추천하는 함수 호출하기

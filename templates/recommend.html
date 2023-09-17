@@ -51,6 +51,7 @@
 
 <body>
     <h1>Recipe Recommendation</h1>
+      <div id="buttonContainer"></div>
 <!--    <h2>재료를 선택하세요</h2>-->
 <!--    <form id="ingredientForm">-->
 <!--        {% for ingredient in ingredients %}-->
@@ -70,6 +71,79 @@
     <a href="{{ url_for('index') }}">Go to MainPage</a>
     </div>
     <script>
+    <!--탐지된 식재료 목록이 생성과 동시에 선택해서 제출하기 버튼 생성-->
+      function createSubmitButton() {
+            var buttonContainer = document.getElementById("buttonContainer");
+            var submitButton = document.createElement("button");
+            submitButton.innerHTML = "Submit";
+            submitButton.type = "submit";
+
+            buttonContainer.appendChild(submitButton);
+        }
+
+       <!--선택된 식재료 목록을 플라스크 서버에 전송하는 함수-->
+           document.getElementById("buttonContainer").addEventListener("click", function() {
+            var dataArray = selectedIngredients  // 전송할 배열 데이터
+            var xhr2 = new XMLHttpRequest();
+            xhr2.open("POST", "/recommend", true);
+            xhr2.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            xhr2.onreadystatechange = function() {
+                if (xhr2.readyState === 4 && xhr2.status === 200) {
+                    window.location.href = "/recommend_page";
+                }
+            };
+
+            var data = JSON.stringify({ "dataArray": dataArray });
+            xhr2.send(data);
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+
+               function attachToggleButtonEventListeners(classes) {
+                         var toggleButtons = document.querySelectorAll(".toggle-button");
+                        toggleButtons.forEach(function(button) {
+                    button.addEventListener("click", function() {
+                        this.classList.toggle("active");
+                        var buttonId = this.id.split('-')[1]; // 버튼의 ID에서 숫자 부분 추출
+                        if (this.classList.contains("active")){
+                            selectedIngredients.push(classes[buttonId]);
+                            }
+                        else{
+                            var indexToRemove = selectedIngredients.indexOf(classes[buttonId]);
+                             selectedIngredients.splice(indexToRemove, 1);
+                        }
+                        console.log("클릭된 토글 버튼:", classes[buttonId]); //콘솔 창에서 선택된 항목 확인
+                        console.log("버튼 상태:", this.classList.contains("active"));
+                        console.log("selectedIngredients:", selectedIngredients);
+
+                        });
+                });
+            }
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         function submitIngredients() {
             const formElement = document.getElementById('ingredientForm');
             const formData = new FormData(formElement);
