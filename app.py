@@ -5,13 +5,13 @@ from recommend import based_Ingredient
 import time
 
 app = Flask(__name__)
-
+app.config['TEMPLATES_AUTO_RELOAD'] = True
 capture_start_time = None
 camera = None  # 웹캠 객체를 전역 변수로 선언
 
 ingredient_classes={"egg":"달걀", "garlic":"마늘","greenonion":"파","lettuce":"상추","meat":"고기","onion":"양파","tofu":"두부"}
 global html_table
-global classes
+global new_classes
 # 웹캠으로부터 프레임을 가져오는 함수
 def get_frame():
     global camera  # 전역 변수 사용
@@ -64,6 +64,7 @@ def capture():
         print("이미지 저장 실패.")
 
 def yolo_result():
+    global new_classes
     from roboflow import Roboflow
     rf = Roboflow(api_key="CwsFxkPSJLuJgcuN44Zw")
     project = rf.workspace().project("ingredients_detection")
@@ -81,13 +82,12 @@ def yolo_result():
 
 @app.route('/page_move',methods=('POST','GET'))
 def page_move():
-    print("classes", classes)
-    return render_template('recommend.html', classes=classes)
+    print("classes", new_classes)
+    return render_template('recommend.html', ingredients=new_classes)
 
 @app.route('/recommend_page',methods=['GET'])
 def recommend_page():
-    selected_ingredients = request.json.get('dataArray')
-    return render_template('recommend.html',table=html_table)
+    return render_template('recommend.html',table=html_table,ingredients=new_classes)
 
 # 선택된 식재료를 이용하여 레시피 추천하는 함수 호출하기
 @app.route('/recommend',methods=('POST','GET'))
@@ -100,7 +100,7 @@ def recommend():
     print(rec)
     global html_table
     html_table = dataframe_to_html(rec)
-    return render_template('recommend.html', table=html_table)
+    return render_template('recommend.html',table=html_table,ingredients=new_classes)
 
 if __name__ == '__main__':
     app.run(debug=True)

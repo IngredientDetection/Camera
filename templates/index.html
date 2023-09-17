@@ -143,174 +143,98 @@
 
     <div>
         <div id="predicted-classes"></div>
-<!--        <div id="buttonContainer"></div>-->
         <div id="pagemove"></div>
         <br>
     </div>
 </div>
 
 
-    <script>
-        selectedIngredients=[]
+<script>
+    selectedIngredients=[]
 
-<!--        // 웹페이지 로드 시, 웹캠 이미지와 예측 이미지 크기를 조정-->
-<!--window.addEventListener('load', function() {-->
-<!--    resizeImages();-->
-<!--});-->
+    // 윈도우 크기가 변경될 때 웹캠 이미지와 예측 이미지 크기를 조정
+    window.addEventListener('resize', function() {
+        resizeImages();
+    });
 
-// 윈도우 크기가 변경될 때 웹캠 이미지와 예측 이미지 크기를 조정
-window.addEventListener('resize', function() {
-    resizeImages();
-});
+    function resizeImages() {
+        var webcamImage = document.getElementById("webcam");
+        var predictionImage = document.getElementById("prediction-image");
 
-function resizeImages() {
-    var webcamImage = document.getElementById("webcam");
-    var predictionImage = document.getElementById("prediction-image");
+        // 웹캠 이미지와 예측 이미지를 원하는 크기로 조절
+        var desiredWidth = webcamImage.clientWidth; // 웹캠 이미지의 현재 가로 크기를 가져옴
+        var desiredHeight = webcamImage.clientHeight; // 웹캠 이미지의 현재 세로 크기를 가져옴
 
-   // 웹캠 이미지와 예측 이미지를 원하는 크기로 조절
-    var desiredWidth = webcamImage.clientWidth; // 웹캠 이미지의 현재 가로 크기를 가져옴
-    var desiredHeight = webcamImage.clientHeight; // 웹캠 이미지의 현재 세로 크기를 가져옴
+        webcamImage.style.width = desiredWidth + "px";
+        webcamImage.style.height = desiredHeight + "px";
 
-    webcamImage.style.width = desiredWidth + "px";
-    webcamImage.style.height = desiredHeight + "px";
+        predictionImage.style.width = desiredWidth + "px";
+        predictionImage.style.height = (desiredWidth / ratio) + "px";
+    }
 
-    predictionImage.style.width = desiredWidth + "px";
-    predictionImage.style.height = desiredHeight + "px";
-}
+    function createSubmitButton2() {
+        var buttonContainer = document.getElementById("pagemove");
+        var submitButton = document.createElement("button");
+        submitButton.innerHTML = "PageMove";
+        submitButton.type = "submit";
+        buttonContainer.appendChild(submitButton);
+    }
 
-
-
-<!--        &lt;!&ndash;탐지된 식재료 목록이 생성과 동시에 선택해서 제출하기 버튼 생성&ndash;&gt;-->
-<!--          function createSubmitButton() {-->
-<!--                var buttonContainer = document.getElementById("buttonContainer");-->
-<!--                var submitButton = document.createElement("button");-->
-<!--                submitButton.innerHTML = "Submit";-->
-<!--                submitButton.type = "submit";-->
-
-<!--                buttonContainer.appendChild(submitButton);-->
-<!--            }-->
-          <!--페이지 이동 버튼-->
-
-          function createSubmitButton2() {
-                var buttonContainer = document.getElementById("pagemove");
-                var submitButton = document.createElement("button");
-                submitButton.innerHTML = "PageMove";
-                submitButton.type = "submit";
-                buttonContainer.appendChild(submitButton);
-            }
-
-<!--           &lt;!&ndash;선택된 식재료 목록을 플라스크 서버에 전송하는 함수&ndash;&gt;-->
-<!--           document.getElementById("buttonContainer").addEventListener("click", function() {-->
-<!--            var dataArray = selectedIngredients  // 전송할 배열 데이터-->
-<!--            var xhr2 = new XMLHttpRequest();-->
-<!--            xhr2.open("POST", "/recommend", true);-->
-<!--            xhr2.setRequestHeader("Content-Type", "application/json;charset=UTF-8");-->
-<!--            xhr2.onreadystatechange = function() {-->
-<!--                if (xhr2.readyState === 4 && xhr2.status === 200) {-->
-<!--                    window.location.href = "/recommend_page";-->
-<!--                }-->
-<!--            };-->
-
-<!--            var data = JSON.stringify({ "dataArray": dataArray });-->
-<!--            xhr2.send(data);-->
-<!--        });-->
-
-          document.getElementById("pagemove").addEventListener("click", function() {
+              document.getElementById("pagemove").addEventListener("click", function() {
                 var xhr3 = new XMLHttpRequest();
-                xhr3.open("GET", "/recommend_page", true);
+                xhr3.open("GET", "/page_move", true);
                 xhr3.onreadystatechange = function() {
                     if (xhr3.readyState === 4 && xhr3.status === 200) {
-                        window.location.href = "/recommend_page";
+                        window.location.href = "/page_move";
                     }
                 };
                 xhr3.send();
             });
 
-        document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function() {
 
-            var webcamImage = document.getElementById("webcam");
-            webcamImage.style.width = "45%";
-            webcamImage.style.height = "45%";
+        var webcamImage = document.getElementById("webcam");
+        webcamImage.style.width = "45%";
+        webcamImage.style.height = "45%";
 
-            var toggleButtons = document.querySelectorAll(".toggle-button");
-            toggleButtons.forEach(function(button) {
-                button.addEventListener("click", function() {
-                    this.classList.toggle("active");
-                });
+        var toggleButtons = document.querySelectorAll(".toggle-button");
+        toggleButtons.forEach(function(button) {
+            button.addEventListener("click", function() {
+                this.classList.toggle("active");
             });
+        });
 
-            document.getElementById("captureButton").addEventListener("click", function() {
-                console.log("Capture button clicked");
-                var xhr = new XMLHttpRequest();
+        document.getElementById("captureButton").addEventListener("click", function() {
+            console.log("Capture button clicked");
+            var xhr = new XMLHttpRequest();
 
-                xhr.open("GET", "/capture", true);
-                xhr.onreadystatechange = function() {
-                    if (xhr.readyState === 4 && xhr.status === 200) {
-                        var classes = JSON.parse(xhr.responseText);
-                        var classesList = document.getElementById("predicted-classes");
-                        classesList.innerHTML = "<h2>Predicted Classes</h2><ul>";
-                        for (var i = 0; i < classes.length; i++) {
-                            classesList.innerHTML += '<li class="toggle-button" id="button-' + i + '">' + classes[i] + '</li>';                        }
-                        classesList.innerHTML += "</ul>";
+            xhr.open("GET", "/capture", true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
 
-<!--                        createSubmitButton();-->
+                    // Capture 버튼 클릭 후, 이미지를 업데이트하는 부분 추가
+                    var predictionContainer = document.getElementById("prediction-container");
+                    predictionContainer.style.display = "block"; // 이미지 표시
 
-                         // Capture 버튼 클릭 후, 이미지를 업데이트하는 부분 추가
-                        var predictionContainer = document.getElementById("prediction-container");
-                        predictionContainer.style.display = "block"; // 이미지 표시
+                    var predictionImage = document.getElementById("prediction-image");
 
-                        var predictionImage = document.getElementById("prediction-image");
+                    predictionImage.onload = function() {
+                        // 이미지가 로드된 후 크기를 조정
+                        var webcamImage = document.getElementById("webcam");
+                        var ratio = webcamImage.width / webcamImage.height;
+                        predictionImage.style.width = webcamImage.clientWidth + "px";
+                        predictionImage.style.height = (webcamImage.clientWidth / ratio) + "px";
+                    };
 
-                        predictionImage.onload = function() {
-                            // 이미지가 로드된 후 크기를 조정
-                            var webcamImage = document.getElementById("webcam");
-                            var ratio = webcamImage.width / webcamImage.height;
-                            predictionImage.style.width = webcamImage.clientWidth + "px";
-                            predictionImage.style.height = (webcamImage.clientWidth / ratio) + "px";
-                            };
-
-                        predictionImage.src = "static/prediction.jpg"; // 이미지 경로를 예측 이미지로 업데이트
-                        predictionImage.alt = "Predicted Image"; // 이미지 alt 속성 업데이트
-                        createSubmitButton2()
-<!--                        attachToggleButtonEventListeners(classes);  // 새로 생성된 토글 버튼에 이벤트 리스너 연결-->
-                     }
-
-<!--                     var imageContainer = document.getElementById("image-container");-->
-<!--                     var image = new Image();-->
-<!--                     image.src = "/get_prediction_image"; // 서버로부터 이미지 가져오기-->
-<!--                     imageContainer.innerHTML = ""; // 이미지를 한 번만 표시하도록 기존 내용 삭제-->
-<!--                     imageContainer.appendChild(image);-->
-
-<!--                     // 웹캠의 크기를 다시 설정 (예: 원래 크기로)-->
-<!--                     var webcamImage = document.getElementById("webcam");-->
-<!--                     webcamImage.style.width = "45%"; // 여기에서 원하는 크기로 설정-->
-
-                };
-                xhr.send();
-            });
-
-<!--            function attachToggleButtonEventListeners(classes) {-->
-<!--                         var toggleButtons = document.querySelectorAll(".toggle-button");-->
-<!--                        toggleButtons.forEach(function(button) {-->
-<!--                    button.addEventListener("click", function() {-->
-<!--                        this.classList.toggle("active");-->
-<!--                        var buttonId = this.id.split('-')[1]; // 버튼의 ID에서 숫자 부분 추출-->
-<!--                        if (this.classList.contains("active")){-->
-<!--                            selectedIngredients.push(classes[buttonId]);-->
-<!--                            }-->
-<!--                        else{-->
-<!--                            var indexToRemove = selectedIngredients.indexOf(classes[buttonId]);-->
-<!--                             selectedIngredients.splice(indexToRemove, 1);-->
-<!--                        }-->
-<!--                        console.log("클릭된 토글 버튼:", classes[buttonId]); //콘솔 창에서 선택된 항목 확인-->
-<!--                        console.log("버튼 상태:", this.classList.contains("active"));-->
-<!--                        console.log("selectedIngredients:", selectedIngredients);-->
-
-<!--                        });-->
-<!--                });-->
-<!--            }-->
-<!--        });-->
-
-    </script>
+                    predictionImage.src = "static/prediction.jpg"; // 이미지 경로를 예측 이미지로 업데이트
+                    predictionImage.alt = "Predicted Image"; // 이미지 alt 속성 업데이트
+                    createSubmitButton2();
+                }
+            };
+            xhr.send();
+        });
+    });
+</script>
 </body>
 </html>
+

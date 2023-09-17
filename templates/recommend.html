@@ -46,20 +46,51 @@
         button:hover {
             background-color: grey;
         }
+          .toggle-button {
+            /* 점 없애기 */
+            list-style: none;
+            font-family: 'Montserrat', sans-serif;
+            color: #black; /* 텍스트 색상 설정 */
+            border: 1px solid #ccc;
+            padding: 5px 10px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s; /* 스무디한 호버 효과 */
+        }
+
+        .toggle-button.active {
+            background-color: grey;
+        }
+
+        #buttonContainer {
+            margin-top: 20px;
+        }
+
+        #pagemove {
+            margin-top: 20px;
+        }
+
+        button {
+            font-family: Arial, sans-serif;
+            padding: 10px 20px;
+            background-color: black;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: grey;
+        }
     </style>
 </head>
 
 <body>
     <h1>Recipe Recommendation</h1>
-      <div id="buttonContainer"></div>
-<!--    <h2>재료를 선택하세요</h2>-->
-<!--    <form id="ingredientForm">-->
-<!--        {% for ingredient in ingredients %}-->
-<!--            <input type="checkbox" name="ingredient" value="{{ ingredient }}">{{ ingredient }}<br>-->
-<!--        {% endfor %}-->
-<!--        <br>-->
-<!--        <input type="button" value="선택 완료" onclick="submitIngredients()">-->
-<!--    </form>-->
+    <br>
+    <h2>식재료 목록</h2>
+    <div id="predicted-classes"></div>
+    <div id="buttonContainer"></div>
     <br>
 <!--    <h2>AI Recommends</h2>-->
     <div class="table-container">
@@ -70,7 +101,9 @@
     <div class="link-center">
     <a href="{{ url_for('index') }}">Go to MainPage</a>
     </div>
+
     <script>
+    var selectedIngredients = []; // 선택된 식재료 목록을 저장할 배열
     <!--탐지된 식재료 목록이 생성과 동시에 선택해서 제출하기 버튼 생성-->
       function createSubmitButton() {
             var buttonContainer = document.getElementById("buttonContainer");
@@ -81,84 +114,133 @@
             buttonContainer.appendChild(submitButton);
         }
 
-       <!--선택된 식재료 목록을 플라스크 서버에 전송하는 함수-->
-           document.getElementById("buttonContainer").addEventListener("click", function() {
-            var dataArray = selectedIngredients  // 전송할 배열 데이터
-            var xhr2 = new XMLHttpRequest();
-            xhr2.open("POST", "/recommend", true);
-            xhr2.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-            xhr2.onreadystatechange = function() {
-                if (xhr2.readyState === 4 && xhr2.status === 200) {
-                    window.location.href = "/recommend_page";
-                }
-            };
+    document.addEventListener("DOMContentLoaded", function() {
 
-            var data = JSON.stringify({ "dataArray": dataArray });
-            xhr2.send(data);
+    var toggleButtons = document.querySelectorAll(".toggle-button");
+    toggleButtons.forEach(function(button) {
+        button.addEventListener("click", function() {
+            this.classList.toggle("active");
         });
+    });
+
+    var ingredients = {{ ingredients | tojson }};
+    console.log("ingredients:", ingredients);
+    var classesList = document.getElementById("predicted-classes");
+    classesList.innerHTML = "<h2>Predicted Classes</h2><ul>";
+    for (var i = 0; i < ingredients.length; i++) {
+        classesList.innerHTML += '<li class="toggle-button" id="button-' + i + '">' + ingredients[i] + '</li>';
+    }
+    classesList.innerHTML += "</ul>";
+    createSubmitButton();
+    attachToggleButtonEventListeners(ingredients);
+     });
 
 
-
-
-
-
-
-
-
-
-
-
-
-               function attachToggleButtonEventListeners(classes) {
-                         var toggleButtons = document.querySelectorAll(".toggle-button");
-                        toggleButtons.forEach(function(button) {
-                    button.addEventListener("click", function() {
-                        this.classList.toggle("active");
-                        var buttonId = this.id.split('-')[1]; // 버튼의 ID에서 숫자 부분 추출
-                        if (this.classList.contains("active")){
-                            selectedIngredients.push(classes[buttonId]);
-                            }
-                        else{
-                            var indexToRemove = selectedIngredients.indexOf(classes[buttonId]);
-                             selectedIngredients.splice(indexToRemove, 1);
-                        }
-                        console.log("클릭된 토글 버튼:", classes[buttonId]); //콘솔 창에서 선택된 항목 확인
-                        console.log("버튼 상태:", this.classList.contains("active"));
-                        console.log("selectedIngredients:", selectedIngredients);
-
-                        });
-                });
+     function attachToggleButtonEventListeners(classes) {
+    var toggleButtons = document.querySelectorAll(".toggle-button");
+    toggleButtons.forEach(function(button) {
+        button.addEventListener("click", function() {
+            this.classList.toggle("active");
+            var buttonId = this.id.split('-')[1]; // 버튼의 ID에서 숫자 부분 추출
+            if (this.classList.contains("active")) {
+                selectedIngredients.push(classes[buttonId]);
+            } else {
+                var indexToRemove = selectedIngredients.indexOf(classes[buttonId]);
+                selectedIngredients.splice(indexToRemove, 1);
             }
-        });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        function submitIngredients() {
-            const formElement = document.getElementById('ingredientForm');
-            const formData = new FormData(formElement);
-
-            fetch('/select_ingredients', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.text())
-            .then(data => {
-                const resultElement = document.getElementById('result');
-                resultElement.innerHTML = data;
+            console.log("클릭된 토글 버튼:", classes[buttonId]); // 콘솔 창에서 선택된 항목 확인
+            console.log("버튼 상태:", this.classList.contains("active"));
+            console.log("selectedIngredients:", selectedIngredients);
             });
+        });
         }
+
+
+      document.getElementById("buttonContainer").addEventListener("click", function() {
+        var dataArray = selectedIngredients  // 전송할 배열 데이터
+        var xhr2 = new XMLHttpRequest();
+        xhr2.open("POST", "/recommend", true);
+        xhr2.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        xhr2.onreadystatechange = function() {
+            if (xhr2.readyState === 4 && xhr2.status === 200){
+                window.location.href = "/recommend_page";            }
+             else {
+             console.log("fail");
+             }
+        };
+        var data = JSON.stringify({ "dataArray": dataArray });
+        xhr2.send(data);
+    });
+
+
     </script>
 
 </body>
 </html>
+
+
+<!--    &lt;!&ndash;탐지된 식재료 목록이 생성과 동시에 선택해서 제출하기 버튼 생성&ndash;&gt;-->
+<!--      function createSubmitButton() {-->
+<!--            var buttonContainer = document.getElementById("buttonContainer");-->
+<!--            var submitButton = document.createElement("button");-->
+<!--            submitButton.innerHTML = "Submit";-->
+<!--            submitButton.type = "submit";-->
+
+<!--            buttonContainer.appendChild(submitButton);-->
+<!--        }-->
+
+<!--       &lt;!&ndash;선택된 식재료 목록을 플라스크 서버에 전송하는 함수&ndash;&gt;-->
+<!--           document.getElementById("buttonContainer").addEventListener("click", function() {-->
+<!--            var dataArray = selectedIngredients  // 전송할 배열 데이터-->
+<!--            var xhr2 = new XMLHttpRequest();-->
+<!--            xhr2.open("POST", "/recommend", true);-->
+<!--            xhr2.setRequestHeader("Content-Type", "application/json;charset=UTF-8");-->
+<!--            xhr2.onreadystatechange = function() {-->
+<!--                if (xhr2.readyState === 4 && xhr2.status === 200) {-->
+<!--                    window.location.href = "/recommend_page";-->
+<!--                }-->
+<!--            };-->
+
+<!--            var data = JSON.stringify({ "dataArray": dataArray });-->
+<!--            xhr2.send(data);-->
+<!--        });-->
+
+
+<!--               function attachToggleButtonEventListeners(classes) {-->
+<!--                         var toggleButtons = document.querySelectorAll(".toggle-button");-->
+<!--                        toggleButtons.forEach(function(button) {-->
+<!--                    button.addEventListener("click", function() {-->
+<!--                        this.classList.toggle("active");-->
+<!--                        var buttonId = this.id.split('-')[1]; // 버튼의 ID에서 숫자 부분 추출-->
+<!--                        if (this.classList.contains("active")){-->
+<!--                            selectedIngredients.push(classes[buttonId]);-->
+<!--                            }-->
+<!--                        else{-->
+<!--                            var indexToRemove = selectedIngredients.indexOf(classes[buttonId]);-->
+<!--                             selectedIngredients.splice(indexToRemove, 1);-->
+<!--                        }-->
+<!--                        console.log("클릭된 토글 버튼:", classes[buttonId]); //콘솔 창에서 선택된 항목 확인-->
+<!--                        console.log("버튼 상태:", this.classList.contains("active"));-->
+<!--                        console.log("selectedIngredients:", selectedIngredients);-->
+
+<!--                        });-->
+<!--                });-->
+<!--            }-->
+<!--        });-->
+
+
+
+<!--        function submitIngredients() {-->
+<!--            const formElement = document.getElementById('ingredientForm');-->
+<!--            const formData = new FormData(formElement);-->
+
+<!--            fetch('/select_ingredients', {-->
+<!--                method: 'POST',-->
+<!--                body: formData-->
+<!--            })-->
+<!--            .then(response => response.text())-->
+<!--            .then(data => {-->
+<!--                const resultElement = document.getElementById('result');-->
+<!--                resultElement.innerHTML = data;-->
+<!--            });-->
+<!--        }-->
