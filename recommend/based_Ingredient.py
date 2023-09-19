@@ -61,7 +61,7 @@ def get_recommendations(N, scores):
     count = 0
     for i in top:
         recommendation.at[count, "음식명"] = df_recipes["food_name"][i]
-        recommendation.at[count, "요리재료내용"] =df_recipes["요리재료내용"][i]
+        recommendation.at[count, "요리재료내용"] = df_recipes["요리재료내용"][i]
         recommendation.at[count, "score"] = f"{scores[i]}"
         count += 1
     return recommendation
