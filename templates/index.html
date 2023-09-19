@@ -13,7 +13,7 @@
             font-family: 'Montserrat', sans-serif;
             text-align: center;
             margin-top: 36px;
-            margin-bottom: 72px;
+            margin-bottom: 54px;
             font-weight: bold;
             color: #333;
         }
@@ -27,44 +27,60 @@
         #webcam-container {
             display: flex;
             align-items: center;
-        }
+            justify-content: space-between; /* 웹캠과 prediction 사이의 여백 조절을 위해 추가 */
+            padding: 0 5%; /* 좌우 여백 설정 */
+            }
 
         #webcam {
-            width: auto;
+            width: 45%; /* 웹캠 크기를 조정 */
             height: auto;
-            float: left;
-        }
+            }
 
         #prediction-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             text-align: center;
-        }
+            width: 45%; /* prediction 이미지 크기를 조정 */
+            }
 
         #prediction-image {
-            max-width: 100%;
+            max-width: 100%; /* 예측 이미지 크기를 웹캠 이미지와 동일하게 유지 */
             height: auto;
             display: block;
             margin: 0 auto;
         }
 
-        #captureButton {
-            margin-left: 20px;
-            margin-right: 20px;
+        #captureButton, #pagemoveButton {
             font-family: Arial, sans-serif;
-            margin-top: 20px;
+            margin-top: 54px;
             padding: 10px 20px;
             background-color: black;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            width: 15%;
+            font-size: 16px;
+            /* 추가된 스타일 */
+            height: auto;
+            display: inline-block;
+            vertical-align: middle;
+            line-height: normal;
+        }
+
+        #pagemoveButton{
+            margin-top: 18px;
         }
 
         #captureButton:hover {
             background-color: grey;
         }
+
+        #pagemoveButton:hover {
+            background-color: grey;
+        }
+
 
         .toggle-button {
             list-style: none;
@@ -102,7 +118,6 @@
             background-color: grey;
         }
     </style>
-
 </head>
 <body>
 <div id="container">
@@ -111,10 +126,13 @@
 
     <div id="webcam-container">
         <img id="webcam" src="{{ url_for('video_feed') }}">
-        <button id="captureButton">Image Capture</button>
         <div id="prediction-container" style="display: none;">
             <img id="prediction-image" src="{{ url_for('static', filename='prediction.jpg') }}" alt="Prediction">
         </div>
+    </div>
+
+    <div id="buttons">
+        <button id="captureButton">Image Capture</button>
     </div>
 
     <div>
@@ -145,6 +163,7 @@
         webcamImage.style.width = desiredWidth + "px";
         webcamImage.style.height = desiredHeight + "px";
 
+        // 예측 이미지도 웹캠 이미지와 동일한 비율로 크기 조절
         predictionImage.style.width = desiredWidth + "px";
         predictionImage.style.height = desiredHeight + "px";
     }
@@ -153,11 +172,12 @@
     function createPagemoveButton() {
         var buttonContainer = document.getElementById("pagemove");
         var submitButton = document.createElement("button");
-        submitButton.innerHTML = "PageMove";
+        submitButton.innerHTML = "Page Move";
         submitButton.type = "submit";
         submitButton.id = "pagemoveButton"; // 버튼에 고유한 ID 부여
         buttonContainer.appendChild(submitButton);
     }
+
 
     document.getElementById("pagemove").addEventListener("click", function() {
         var xhr3 = new XMLHttpRequest();
