@@ -1,28 +1,47 @@
-import os
-import sys
-import logging
-import unidecode
-import ast
+'''
+Class Name or File Name: based_ingredient.py
+* Description: 탐지된 식재료를 기반으로 레시피 추천을 한다.
+* Included Methods: 1. get_and_sort_corpus()
+                    2. get_recommendations()
+                    3. get_recs()
 
-import numpy as np
-import pandas as pd
+Author: Jeong Jae Min
+Date : 2023-09-21
+Version: release 1.0 on  2023-09-21
+Change Histories: get_and_sort_corpus was updated by 정재민 2023-09-21.
+       get_recommendations() was updated by 노민성 2023-09-21.
+       get_recs() by 이인규 2023-09-21.
+'''
+
+'''
+1. Method Name: get_and_sort_corpus()
+* Function: 로컬 데이터베이스에 있는 레시피 데이터를 불러와서 레시피 식재료들을 띄어 쓰기 단위로 분할하여 
+            오름차순으로 정렬하여 식재료가 정렬된 레시피 데이터를 만든다.
+* Return Value: corpus_sorted if it performs completely; an error code otherwise. '''
+
+'''
+2. Method Name: get_recommendations()
+* Function: 머신러닝으로 추천 받은 레시피를 데이터프레임 형태로 반환해준다. 
+* Return Value: recommendation if it performs completely; an error code otherwise. '''
+
+'''
+3. Method Name: get_recs()
+* Function: TF-IDF를 통해 식재료 빈도수를 기반으로 레시피들의 유사도를 벡터화하고 이를 코사인 유사도를 사용하여 레시피를 추천해준다. 
+* Parameter: ingredients=선택한 식재료 목록들, 
+             N=추천받을 레시피 상위 갯수
+             mean=사전에 TF-IDF로 벡터화된 객체
+* Return Value: recommendations if it performs completely; an error code otherwise. '''
+
+
 
 from gensim.models import Word2Vec
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
-from collections import defaultdict
-from gensim.models import Word2Vec
-from sklearn.feature_extraction.text import TfidfVectorizer
+
 from sklearn.metrics.pairwise import cosine_similarity
 from TfidfEmbeddingVectorizer import TfidfEmbeddingVectorizer
 from MeanEmbeddingVectorizer import MeanEmbeddingVectorizer
-import Word2Vec_train
-from collections import defaultdict
+
 import pandas as pd
-import pickle
-import csv
-import numpy as np
-import config
+
 ## 콘텐츠 기반 추천시스템
 
 recipe_data = pd.read_csv("data\pre_tmdb_recipe3.csv",encoding='cp949')
@@ -74,7 +93,6 @@ def get_recs(ingredients, N=5, mean=False):
     model.init_sims(replace=True)
     if model:
         print("Successfully loaded model")
-
 
     corpus = get_and_sort_corpus(recipe_core)
 

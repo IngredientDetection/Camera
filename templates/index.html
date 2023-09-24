@@ -1,3 +1,32 @@
+<!--
+Class Name or File Name: index.html
+* Description: 웹 메인 홈 페이지로써 냉장고 이미지를 캡처하고 식재료를 탐지하여 레시피 추천 알고리즘으로 전송한다.
+* Included Methods: 1. document.getElementById("captureButton").addEventListener
+                    2. document.getElementById("pagemove").addEventListener
+
+Author: Jeong Jae Min
+Date : 2023-09-20
+Version: release 1.0 on 2023-09-20
+Change Histories: ("captureButton").addEventListener was updated by 정재민 2023-09-20.
+       xhr.open("GET", "/capture", true); was updated by 노민성 2023-09-20.
+       document.getElementById("pagemove").addEventListener by 이인규 2023-09-20.
+-->
+
+<!--
+1. Method Name: document.getElementById("captureButton").addEventListener
+* Function: CaptureButton이 누르면 플라스크에서 /capture 라우팅을 실행하고 캡처된 이미지를 화면에 출력한다.
+* Return Value: xhr.readyState === 4 && xhr.status === 200 if it performs completely; an error code otherwise.
+-->
+
+<!--
+2. Method Name: document.getElementById("pagemove").addEventListener
+* Function: recommend.html로 웹 페이지를 이동한다.
+* Parameter: xhr3.open("GET", "/page_move", true)= 비동기식 방식으로 플라스크에서 page_move 라우팅함수를 실행시킨다.
+* Return Value: xhr3.readyState === 4 && xhr3.status === 200 if it performs completely; an error code otherwise.
+-->
+
+
+
 <!DOCTYPE html>
 <html>
 <head>

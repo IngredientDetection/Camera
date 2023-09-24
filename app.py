@@ -1,3 +1,50 @@
+'''
+Class Name or File Name: app.py
+* Description: 클라이언트 서버 메인 파일로 웹페이지 백엔드 기능과 식재료 탐지 AI 호출, 레시피 추천 AI를 호출한다.
+* Included Methods: 1. index()
+                    2. capture()
+                    3. yolo_result()
+                    4. page_move()
+                    5. recommend()
+
+Author: Jeong Jae Min
+Date : 2023-09-20
+Version: release 1.0 on 2023-09-20
+Change Histories: ("captureButton").addEventListener was updated by 정재민 2023-09-20.
+       xhr.open("GET", "/capture", true); was updated by 노민성 2023-09-20.
+       document.getElementById("pagemove").addEventListener by 이인규 2023-09-20.
+'''
+
+'''
+1. Method Name: index()
+* Function: 플라스크 웹 메인 페이지를 실행한다.
+* Return Value: render_template('index.html') if it performs completely; an error code otherwise. '''
+
+'''
+2. Method Name: capture()
+* Function: 웹 캐에서 냉장고 안에 이미지를 캡처하고 식재료 탐지 AI를 호출한뒤 탐지된 식재료 목록들을 반환한다.
+* Return Value: return jsonify(classes) if it performs completely; an error code otherwise. '''
+
+'''
+3. Method Name: yolo_result()
+* Function: 캡처된 냉장고 이미지를 식재료 탐지 AI를 이용하여 식재료들을 탐지한다. 
+            탐지된 식재료를 호출한 함수에 반환한다.
+* Return Value: new_classes if it performs completely; an error code otherwise. '''
+
+'''
+4. Method Name: page_move()
+* Function: 레시피 추천 웹페이지로 페이지를 이동한다.
+* Return Value: render_template('recommend.html', ingredients=new_classes) if it performs completely; an error code otherwise. '''
+
+'''
+5. Method Name: recommend()
+* Function: 식재료 탐지 AI를 호출하고 추천받은 레시피를 recommend.html에 전송한다.
+* Parameter: table=추천 받은 레시피를 테이블 형태.
+             ingredients= 레시피에 사용된 식재료의 정보.
+* Return Value: render_template('recommend.html',table=html_table,ingredients=new_classes) if it performs completely; an error code otherwise. '''
+
+
+
 from flask import Flask, render_template, Response, jsonify, request, redirect, url_for
 import cv2
 import sys, os
