@@ -136,7 +136,7 @@ def page_move():
 def recommend_page():
     return render_template('recommend.html',table=html_table,ingredients=new_classes)
 
-# 선택된 식재료를 이용하여 레시피 추천하는 함수 호출하기
+#선택된 식재료를 이용하여 레시피 추천하는 함수 호출하기
 @app.route('/recommend',methods=('POST','GET'))
 def recommend():
     selected_ingredients = request.json.get('dataArray')
@@ -148,6 +148,7 @@ def recommend():
     global html_table
     html_table = dataframe_to_html(rec)
     return render_template('recommend.html',table=html_table,ingredients=new_classes)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

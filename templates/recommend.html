@@ -1,30 +1,3 @@
-<!--
-Class Name or File Name: recommend.html
-* Description: 탐지된 식재료들 목록중에 원하는 식재료를 선택해서 식재료 탐지 AI에 재료목록들을 보낸다.
-* Included Methods: 1. attachToggleButtonEventListeners(classes)
-                    2. document.getElementById("buttonContainer").addEventListener("click", function()
-
-Author: Jeong Jae Min
-Date : 2023-09-20
-Version: release 1.0 on 2023-09-20
-Change Histories: attachToggleButtonEventListeners(classes) was updated by 정재민 2023-09-20.
-       document.getElementById("buttonContainer").addEventListener("click", function() was updated by 노민성 2023-09-20.
--->
-
-<!--
-1. Method Name: attachToggleButtonEventListeners(classes)
-* Function: 탐지된 식재료 목록에서 사용자가 원하는 식재료를 선택해서 리스트에 추가한다.
-* Parameter:  classes= 사용자가 선택한 식재료들
-* Return Value: xhr.readyState === 4 && xhr.status === 200 if it performs completely; an error code otherwise.
--->
-
-<!--
-2. Method Name: document.getElementById("buttonContainer").addEventListener("click", function()
-* Function: 사용자가 원하는 식재료들을 선택해서 레시피 추천 AI에 보내고 추천 받은 레시피를 웹페이지에 보여준다.
-* Parameter:  data= 추천받은 레시피 데이터
-* Return Value: xhr2.readyState === 4 && xhr3.status === 200 if it performs completely; an error code otherwise.
--->
-
 <!DOCTYPE html>
 <html>
 
@@ -42,7 +15,7 @@ Change Histories: attachToggleButtonEventListeners(classes) was updated by 정�
         h1 {
             text-align: center;
             margin-top: 36px;
-            margin-bottom : 5%;
+            margin-bottom: 5%;
             font-weight: bold;
             color: #333;
         }
@@ -94,14 +67,19 @@ Change Histories: attachToggleButtonEventListeners(classes) was updated by 정�
             background-color: grey;
         }
 
-        #buttonContainer{
+        #buttonContainer {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #buttonContainer2 {
             text-align: center;
             margin-top: 20px;
         }
 
         #spaceContainer {
             margin-top: 20px;
-            display : None;
+            display: none;
         }
 
         button {
@@ -115,7 +93,6 @@ Change Histories: attachToggleButtonEventListeners(classes) was updated by 정�
             cursor: pointer;
             width: 15%;
             font-size: 16px;
-            /* 추가된 스타일 */
             height: auto;
             display: inline-block;
             vertical-align: middle;
@@ -126,109 +103,141 @@ Change Histories: attachToggleButtonEventListeners(classes) was updated by 정�
             background-color: grey;
         }
 
-
+        /* 수정된 스타일 */
+        #recommendation-results {
+            text-align: center;
+            margin-top: 20px;
+            display: none; /* 초기에는 결과를 숨깁니다. */
+        }
     </style>
 </head>
 
 <body>
-    <h1>Recipe Recommendation</h1>
-    <div id="predicted-classes"></div>
-    <div id="buttonContainer"></div>
+    <div id="start"></div>
 
-    <div id="sapceContainer"></div>
+    <!-- 재료 목록을 이곳으로 이동 -->
+    <div id="predicted-classes"></div>
 
     <div class="table-container">
         {{table|safe}}
     </div>
+`
+    <br><br>
+    <!-- 결과를 표시할 div (Submit 버튼 아래로 이동) -->
+    <div id="recommendation-results"></div>
+
+    <div id="buttonContainer"></div>
+    <div id="buttonContainer2"></div>
+
+    <div id="spaceContainer"></div>
 
     <div class="link-center">
-        <div id= "buttonContainer2"></div>
-        <button onclick="goToMainPage()">Go to MainPage</button>
+    <!-- Submit 버튼을 이 div 아래에 배치, 초기에는 비활성화 상태 -->
     </div>
+
+<!-- Submit 버튼과 "Go to Main Page" 버튼 사이에 공간을 만듭니다 -->
+    <br><br>
+
+    <div class="link-center">
+        <!-- "Go to Main Page" 버튼을 이 div 아래에 배치 -->
+    </div>
+
 
     <script>
         var selectedIngredients = [];
+        var resultsShown = false; // 결과를 한 번만 표시하도록 상태 변수 추가
 
-        function createSubmitButton() {
-            var buttonContainer = document.getElementById("buttonContainer");
-            var submitButton = document.createElement("button");
-            submitButton.innerHTML = "Submit";
-            submitButton.type = "submit";
+        function createSubmitButtonIfNeeded() {
+        if (!resultsShown) {
 
-            buttonContainer.appendChild(submitButton);
-        }
+        var textContainer = document.getElementById("start");
+        var text = document.createElement("h1");
+        text.textContent = "Recipe"; // 텍스트 내용 설정
+        textContainer.appendChild(text);
 
+        var buttonContainer = document.getElementById("buttonContainer");
+        var submitButton = document.createElement("button");
+        submitButton.innerHTML = "Submit";
+        submitButton.type = "submit";
+        buttonContainer.appendChild(submitButton);
+
+        var buttonContainer2 = document.getElementById("buttonContainer2");
+        var submitButton2 = document.createElement("button");
+        submitButton2.innerHTML = "Go to Mainpage";
+        submitButton2.type = "button";
+        submitButton2.addEventListener("click", goToMainPage);
+
+        buttonContainer2.appendChild(submitButton2);
+        resultsShown = true; // 결과를 한 번 표시한 후 상태 업데이트
+
+        // 결과를 표시할 때 Go to MainPage 버튼 활성화
+
+
+    }
+    }
 
         function goToMainPage() {
             window.location.href = "{{ url_for('index') }}";
         }
 
+        var ingredients = {{ ingredients | tojson }};
+        var classesList = document.getElementById("predicted-classes");
+        for (var i = 0; i < ingredients.length; i++) {
+            classesList.innerHTML += '<li class="toggle-button" id="button-' + i + '">' + ingredients[i] + '</li>';
+        }
+        classesList.innerHTML += "</ul>";
+
         document.addEventListener("DOMContentLoaded", function () {
+    // 페이지가 처음으로 로드될 때 createSubmitButtonIfNeeded 호출
+        createSubmitButtonIfNeeded();
 
-        if (window.location.pathname === "/recommend_page") {
-            document.getElementById("buttonContainer").style.display = "none";
-            document.getElementById("spaceContainer").style.display = "block";
-        }
+    if (window.location.pathname === "/recommend_page") {
+        document.getElementById("buttonContainer").style.display = "none";
+        document.getElementById("spaceContainer").style.display = "block";
+    }
 
-
-            var toggleButtons = document.querySelectorAll(".toggle-button");
-            toggleButtons.forEach(function (button) {
-                button.addEventListener("click", function () {
-                    this.classList.toggle("active");
-                });
-            });
-
-            var ingredients = {{ ingredients | tojson }};
-            console.log("ingredients:", ingredients);
-            var classesList = document.getElementById("predicted-classes");
-
-            for (var i = 0; i < ingredients.length; i++) {
-                classesList.innerHTML += '<li class="toggle-button" id="button-' + i + '">' + ingredients[i] + '</li>';
+    var toggleButtons = document.querySelectorAll(".toggle-button");
+    toggleButtons.forEach(function (button) {
+        button.addEventListener("click", function () {
+            this.classList.toggle("active");
+            var buttonId = this.id.split('-')[1];
+            if (this.classList.contains("active")) {
+                selectedIngredients.push(ingredients[buttonId]);
+            } else {
+                var indexToRemove = selectedIngredients.indexOf(ingredients[buttonId]);
+                selectedIngredients.splice(indexToRemove, 1);
             }
-            classesList.innerHTML += "</ul>";
-            createSubmitButton();
-            attachToggleButtonEventListeners(ingredients);
+            console.log("클릭된 토글 버튼:", ingredients[buttonId]);
+            console.log("버튼 상태:", this.classList.contains("active"));
+            console.log("selectedIngredients:", selectedIngredients);
+
+            // 토글 버튼을 클릭할 때마다 Go to MainPage 버튼 활성화
+            document.getElementById("mainPageButton").disabled = false;
         });
-
-        function attachToggleButtonEventListeners(classes) {
-            var toggleButtons = document.querySelectorAll(".toggle-button");
-            toggleButtons.forEach(function (button) {
-                button.addEventListener("click", function () {
-                    this.classList.toggle("active");
-                    var buttonId = this.id.split('-')[1];
-                    if (this.classList.contains("active")) {
-                        selectedIngredients.push(classes[buttonId]);
-                    } else {
-                        var indexToRemove = selectedIngredients.indexOf(classes[buttonId]);
-                        selectedIngredients.splice(indexToRemove, 1);
-                    }
-                    console.log("클릭된 토글 버튼:", classes[buttonId]);
-                    console.log("버튼 상태:", this.classList.contains("active"));
-                    console.log("selectedIngredients:", selectedIngredients);
-                });
-            });
-        }
-
-        document.getElementById("buttonContainer").addEventListener("click", function() {
-        var dataArray = selectedIngredients  // 전송할 배열 데이터
-        var xhr2 = new XMLHttpRequest();
-        xhr2.open("POST", "/recommend", true);
-        xhr2.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-        xhr2.onreadystatechange = function() {
-            if (xhr2.readyState === 4 && xhr2.status === 200){
-                window.location.href = "/recommend_page"; }
-             else {
-             console.log("fail");
-             }
-        };
-
-        var data = JSON.stringify({ "dataArray": dataArray });
-        xhr2.send(data);
-
     });
 
-    </script>
+});
 
+        document.getElementById("buttonContainer").addEventListener("click", function () {
+            var dataArray = selectedIngredients;
+            var xhr2 = new XMLHttpRequest();
+            xhr2.open("POST", "/recommend", true);
+            xhr2.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            xhr2.onreadystatechange = function () {
+                if (xhr2.readyState === 4 && xhr2.status === 200) {
+                    // 결과를 받아와서 recommendation-results 요소에 추가
+                    var resultsDiv = document.getElementById("recommendation-results");
+                    resultsDiv.innerHTML = xhr2.responseText;
+                    resultsDiv.style.display = "block"; // 결과를 표시
+                } else {
+                    console.log("fail");
+                }
+            };
+
+            var data = JSON.stringify({ "dataArray": dataArray });
+            xhr2.send(data);
+        });
+    </script>
 </body>
 
 </html>
