@@ -135,6 +135,24 @@ Change Histories: attachToggleButtonEventListeners(classes) was updated by 정�
             margin-top: 20px;
             display: none; /* 초기에는 결과를 숨깁니다. */
         }
+
+
+        #loading-container {
+        position: fixed; /* 절대 위치로 설정 */
+        top: 50%; /* 화면 세로 중앙에 위치 */
+        left: 50%; /* 화면 가로 중앙에 위치 */
+        transform: translate(-50%, -50%); /* 화면 중앙 정렬 */
+        background-color: rgba(255, 255, 255, 0.9); /* 배경색 및 투명도 설정 */
+        padding: 20px;
+        border-radius: 5px;
+        text-align: center;
+        display: none; /* 초기에는 숨김 */
+        }
+
+        #loading-container img {
+        max-width: 100px; /* 이미지 크기 조절 */
+        }
+
     </style>
 </head>
 
@@ -146,6 +164,10 @@ Change Histories: attachToggleButtonEventListeners(classes) was updated by 정�
 
     <div class="table-container">
         {{table|safe}}
+    </div>
+    <div id="loading-container" style="display: none;">
+    <img src="static/progress.png" alt="Loading..." />
+    <p>Loading...</p>
     </div>
 `
     <br><br>
@@ -196,8 +218,6 @@ Change Histories: attachToggleButtonEventListeners(classes) was updated by 정�
         buttonContainer2.appendChild(submitButton2);
         resultsShown = true; // 결과를 한 번 표시한 후 상태 업데이트
 
-        // 결과를 표시할 때 Go to MainPage 버튼 활성화
-
 
     }
     }
@@ -245,12 +265,21 @@ Change Histories: attachToggleButtonEventListeners(classes) was updated by 정�
 });
 
         document.getElementById("buttonContainer").addEventListener("click", function () {
-            var dataArray = selectedIngredients;
-            var xhr2 = new XMLHttpRequest();
-            xhr2.open("POST", "/recommend", true);
-            xhr2.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-            xhr2.onreadystatechange = function () {
-                if (xhr2.readyState === 4 && xhr2.status === 200) {
+        // 모델 학습 중 이미지를 화면에 표시
+        var loadingContainer = document.getElementById("loading-container");
+        loadingContainer.style.display = "block"; // 이미지를 표시
+
+        // 선택된 식재료 데이터를 가져오고 서버에 전송
+        var dataArray = selectedIngredients;
+        var xhr2 = new XMLHttpRequest();
+        xhr2.open("POST", "/recommend", true);
+        xhr2.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        xhr2.onreadystatechange = function () {
+            if (xhr2.readyState === 4) {
+                // 학습 완료 시 이미지를 숨김
+                loadingContainer.style.display = "none"; // 이미지를 숨김
+
+                if (xhr2.status === 200) {
                     // 결과를 받아와서 recommendation-results 요소에 추가
                     var resultsDiv = document.getElementById("recommendation-results");
                     resultsDiv.innerHTML = xhr2.responseText;
@@ -258,11 +287,12 @@ Change Histories: attachToggleButtonEventListeners(classes) was updated by 정�
                 } else {
                     console.log("fail");
                 }
-            };
+            }
+        };
 
-            var data = JSON.stringify({ "dataArray": dataArray });
-            xhr2.send(data);
-        });
+        var data = JSON.stringify({ "dataArray": dataArray });
+        xhr2.send(data);
+    });
     </script>
 </body>
 
