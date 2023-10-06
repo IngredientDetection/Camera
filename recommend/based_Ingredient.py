@@ -55,7 +55,6 @@ recipe_core=recipe_core.fillna("")
 import config
 #from ingredient_parser import ingredient_parser
 
-
 def get_and_sort_corpus(data):
     corpus_sorted = []
     for doc in data.요리재료내용.values:

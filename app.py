@@ -63,9 +63,9 @@ global new_classes
 def get_frame():
     global camera  # 전역 변수 사용
 
-    if camera is None:
-        camera = cv2.VideoCapture(0) #첫번째 카메라를 객체로 가져옴
-
+    camera = cv2.VideoCapture(0) #첫번째 카메라를 객체로 가져옴
+    os.remove("./static/prediction.jpg")
+    
     while True:
         success, frame = camera.read()
         if not success:
@@ -116,9 +116,9 @@ def yolo_result():
     rf = Roboflow(api_key="CwsFxkPSJLuJgcuN44Zw")
     project = rf.workspace().project("ingredients_detection")
     model = project.version(2).model
-    model.predict("captured_image2.jpg", confidence=40, overlap=30).save("prediction.jpg")
+    model.predict("captured_image.jpg", confidence=40, overlap=30).save("./static/prediction.jpg")
     #pred 에 x y width height confidence class image_path prediction_type 이 있다
-    pred = model.predict("captured_image2.jpg", confidence=40, overlap=30)
+    pred = model.predict("captured_image.jpg", confidence=40, overlap=30)
     new_classes = []
     #class 목록까지 불러옴
     classes = [prediction['class'] for prediction in pred]
