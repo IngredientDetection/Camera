@@ -64,7 +64,6 @@ def get_frame():
     global camera  # 전역 변수 사용
 
     camera = cv2.VideoCapture(0) #첫번째 카메라를 객체로 가져옴
-    os.remove("./static/prediction.jpg")
     
     while True:
         success, frame = camera.read()
@@ -89,6 +88,8 @@ def dataframe_to_html(dataframe):
 
 @app.route('/video_feed')  # 웹 브라우저에서 웹캠 스트리밍을 수신할 때 사용
 def video_feed():
+    if os.path.isfile("./statoc/prediction.jpg") is True:
+        os.remove("./static/prediction.jpg")
     return Response(get_frame(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 @app.route('/capture')
