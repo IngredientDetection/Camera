@@ -63,9 +63,8 @@ global new_classes
 def get_frame():
     global camera  # 전역 변수 사용
 
-    if camera is None:
-        camera = cv2.VideoCapture(0) #첫번째 카메라를 객체로 가져옴
-
+    camera = cv2.VideoCapture(0) #첫번째 카메라를 객체로 가져옴
+    
     while True:
         success, frame = camera.read()
         if not success:
@@ -89,6 +88,8 @@ def dataframe_to_html(dataframe):
 
 @app.route('/video_feed')  # 웹 브라우저에서 웹캠 스트리밍을 수신할 때 사용
 def video_feed():
+    if os.path.isfile("./statoc/prediction.jpg") is True:
+        os.remove("./static/prediction.jpg")
     return Response(get_frame(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 @app.route('/capture')
@@ -116,7 +117,11 @@ def yolo_result():
     rf = Roboflow(api_key="CwsFxkPSJLuJgcuN44Zw")
     project = rf.workspace().project("ingredients_detection")
     model = project.version(2).model
+
     pred=model.predict("captured_image.jpg", confidence=40, overlap=30).save("./static/prediction.jpg")
+
+    model.predict("captured_image.jpg", confidence=40, overlap=30).save("./static/prediction.jpg")
+
     #pred 에 x y width height confidence class image_path prediction_type 이 있다
     pred = model.predict("captured_image.jpg", confidence=40, overlap=30)
     new_classes = []
