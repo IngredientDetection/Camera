@@ -105,7 +105,7 @@ def capture():
         classes=yolo_result()
 
         print(classes)
-
+        camera.release()
         return jsonify(classes)
     else:
         print("이미지 저장 실패.")
@@ -116,9 +116,9 @@ def yolo_result():
     rf = Roboflow(api_key="CwsFxkPSJLuJgcuN44Zw")
     project = rf.workspace().project("ingredients_detection")
     model = project.version(2).model
-    model.predict("captured_image2.jpg", confidence=40, overlap=30).save("prediction.jpg")
+    pred=model.predict("captured_image.jpg", confidence=40, overlap=30).save("./static/prediction.jpg")
     #pred 에 x y width height confidence class image_path prediction_type 이 있다
-    pred = model.predict("captured_image2.jpg", confidence=40, overlap=30)
+    pred = model.predict("captured_image.jpg", confidence=40, overlap=30)
     new_classes = []
     #class 목록까지 불러옴
     classes = [prediction['class'] for prediction in pred]
