@@ -116,7 +116,7 @@ def yolo_result():
     from roboflow import Roboflow
     rf = Roboflow(api_key="CwsFxkPSJLuJgcuN44Zw")
     project = rf.workspace().project("ingredients_detection")
-    model = project.version(2).model
+    model = project.version(6).model
 
     pred=model.predict("captured_image.jpg", confidence=40, overlap=30).save("./static/prediction.jpg")
 
