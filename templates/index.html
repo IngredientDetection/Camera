@@ -156,7 +156,6 @@ Change Histories: ("captureButton").addEventListener was updated by 정재민 20
     <div id="webcam-container">
         <img id="webcam" src="{{ url_for('video_feed') }}">
         <div id="prediction-container" style="display: none;">
-<!--            <img id="prediction-image" src="{{ url_for('static', filename='./static/prediction.jpg') }}" alt="Prediction">-->
         </div>
     </div>
 
@@ -249,8 +248,6 @@ Change Histories: ("captureButton").addEventListener was updated by 정재민 20
                     predictionImage.id = 'prediction-image';
                     predictionImage.src = "./static/prediction.jpg"; // 이미지 경로를 예측 이미지로 업데이트
 
-<!--                    pred-->
-
                     predictionImage.onload = function() {
 
                         predictionContainer.appendChild(predictionImage);
@@ -261,9 +258,6 @@ Change Histories: ("captureButton").addEventListener was updated by 정재민 20
                         predictionImage.style.width = webcamImage.clientWidth + "px";
                         predictionImage.style.height = (webcamImage.clientWidth / ratio) + "px";
                     };
-
-<!--                    predictionImage.src = "static/prediction.jpg"; // 이미지 경로를 예측 이미지로 업데이트-->
-<!--                    predictionImage.alt = "Predicted Image"; // 이미지 alt 속성 업데이트-->
 
                     // 이미 pagemove 버튼이 있는지 확인하고 없는 경우에만 생성
                     var pagemoveButton = document.getElementById("pagemoveButton");
