@@ -85,7 +85,6 @@ def get_recommendations(N, scores):
     return recommendation
 
 
-
 def get_recs(ingredients, N=5, mean=False):
     # load in word2vec model
     model = Word2Vec.load("./model_cbow2.bin")

@@ -118,6 +118,7 @@ def yolo_result():
     project = rf.workspace().project("ingredients_detection")
     model = project.version(6).model
 
+
     pred=model.predict("captured_image.jpg", confidence=40, overlap=30).save("./static/prediction.jpg")
 
     model.predict("captured_image.jpg", confidence=40, overlap=30).save("./static/prediction.jpg")
@@ -127,8 +128,10 @@ def yolo_result():
     new_classes = []
     #class 목록까지 불러옴
     classes = [prediction['class'] for prediction in pred]
+
     for c in classes:
-        new_classes.append(ingredient_classes[c])
+        if ingredient_classes[c] not in new_classes:
+            new_classes.append(ingredient_classes[c])
     return new_classes
 
 
