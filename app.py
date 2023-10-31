@@ -150,12 +150,24 @@ def recommend():
     selected_ingredients = request.json.get('dataArray')
     print("selected_ingredients", selected_ingredients)
     input = ', '.join(selected_ingredients)
-    rec = based_Ingredient.get_recs(input)
+    recipe_core = based_Ingredient.get_recs(input)
+    rc = recipe_core[['음식명', '요리재료내용', 'score']]
+
     # 이 예시에서는 간단히 선택된 재료를 출력합니다.
-    print(rec)
+    print(recipe_core)
     global html_table
-    html_table = dataframe_to_html(rec)
+    html_table = dataframe_to_html(rc)
+    #html_table = recipe_core.to_html(classes='table table-striped', escape=False, index=False)
+    for index, row in recipe_core.iterrows():
+        url = round(row['URL'])
+        name=row['음식명']
+        print(type(url))
+        link = f'<a href="https://www.10000recipe.com/recipe/{url}">{name}</a>'
+        html_table = html_table.replace(str(row['음식명']), link)
     return render_template('recommend.html',table=html_table,ingredients=new_classes)
+
+
+
 
 
 if __name__ == '__main__':
